@@ -31,5 +31,3 @@ Chrome browser: https//localhost:3000/ to access.
 
 Chrome browser: https//localhost:3000/ to next access.
 Response too fast ! :sparkles::rocket::sparkles:
-```
-
