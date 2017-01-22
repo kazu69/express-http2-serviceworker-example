@@ -1,0 +1,111 @@
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import mime from 'mime-types';
+
+const router = express.Router();
+
+const appDir = path.join(__dirname, '/..');
+const viewPath = path.join(appDir, '/views');
+const publicPath = path.join(appDir, '/public');
+const jsPath = path.join(appDir, '/public/js');
+
+const resourceType = {
+    script: 'script',
+    stylesheet: 'style',
+    image: 'image',
+}
+
+const resourceScript = (line) => {
+    if(/<script/.test(line) && /src=/.test(line)) {
+        return line.match(/src="([^"]*)"/)[1];
+    }
+
+    return false;
+}
+
+const resourceStyleseet = (line) => {
+    if(/<link/.test(line) && /stylesheet/.test(line) && /href=/.test(line)) {
+        return line.match(/href="([^"]*)"/)[1];
+    }
+
+    return false;
+}
+
+const resourceImage = (line) => {
+    if(/<img/.test(line) && /src=/.test(line)) {
+        return line.match(/src="([^"]*)"/)[1];
+    }
+
+    return false;
+}
+
+const resourceFilePushHeader = (filePath, option = {}) => {
+    const result = [];
+    const regFile = /\/.*?([\/\w\.]+)[\s\?]?.*/;
+    const regExtention = /\.(.*)/;
+
+    if (fs.existsSync(filePath) && !fs.statSync(filePath).isDirectory()) {
+        fs.readFileSync(filePath, option)
+        .split(/\n/)
+        .filter(line => {
+            let file;
+            let type;
+
+            if(resourceScript(line)) {
+                file = resourceScript(line)
+                type = resourceType.script
+            }
+
+            else if(resourceStyleseet(line)) {
+                file = resourceStyleseet(line)
+                type = resourceType.stylesheet
+            }
+
+            else if(resourceImage(line)) {
+                file = resourceImage(line)
+                type = resourceType.image
+            }
+
+            else {
+                return false;
+            }
+
+            result.push(`</${file}>; rel=preload; as=${type}`);
+        });
+    }
+    return result;
+}
+
+router.get('/', function (req, res, next) {
+    let filePath;
+    if (req.url.match(/\.(htm|html)$/)) {
+        filePath = `${viewPath}${req.url}`;
+    } else if (req.url.lastIndexOf('/') === 0) {
+        filePath = `${viewPath}${req.url}index.html`;
+    } else {
+        next();
+    }
+
+    const option = { encoding: 'utf8' };
+    const headers = resourceFilePushHeader(filePath, option);
+    if(headers.length > 0) {
+        res.setHeader('Link', headers.join(','));
+    }
+    next();
+});
+
+router.get('/', (req, res) => {
+    const html = fs.readFileSync(`${viewPath}/index.html`);
+    res.end(html);
+});
+
+router.get('/sw-test', (req, res) => {
+    res.sendFile(`${viewPath}/sw-test.html`);
+});
+
+router.get('/sw-hello', (req, res) => {
+    res.sendFile(`${viewPath}/sw-hello.html`);
+});
+
+module.exports = router;
