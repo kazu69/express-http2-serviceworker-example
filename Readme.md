@@ -1,4 +1,4 @@
-# Express with HTTP2 and Server Push and ServiceWorker :rocket:
+# Express with HTTP2 and Server Push and ServiceWorker :sparkles::rocket::sparkles:
 
 > Express with HTTP2 Example.
 > Server Push Example.
@@ -27,8 +27,9 @@ Chrome browser: https//localhost:3000/push/ to access.
 
 Chrome browser: https//localhost:3000/ to access.
 
-## Fetch Event Listening. Images file using local cache
+## In the second access, the cache is used in the Fetch event
 
 Chrome browser: https//localhost:3000/ to next access.
+Response too fast ! :sparkles::rocket::sparkles:
 ```
 
