@@ -32,3 +32,5 @@ Chrome browser: https//localhost:3000/ to access.
 After the second time, the Service Worker intercepts the HTTP request and delivers the Assets file from the cache.
 
 Chrome browser: https//localhost:3000/ to next access.
+
+Response too fast ! :sparkles::rocket::sparkles:
