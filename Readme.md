@@ -25,11 +25,12 @@ Chrome browser: https//localhost:3000/push/ to access.
 
 ## Try Server Push and Service Worker Cache.
 
+When accessing for the first time, Assets file is delivered with Server Push.
+
 Chrome browser: https//localhost:3000/ to access.
 
-## In the second access, the cache is used in the Fetch event
+After the second time, the Service Worker intercepts the HTTP request and delivers the Assets file from the cache.
 
 Chrome browser: https//localhost:3000/ to next access.
-Response too fast ! :sparkles::rocket::sparkles:
-```
 
+Response too fast ! :sparkles::rocket::sparkles:
